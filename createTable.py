@@ -20,8 +20,7 @@ class createTable():
                 pass
             for j in range(0,column):
                 self.table[i][j]=dpg.add_input_float(parent=self.group[i], step=0,width=80)
-    def getData(self):
-        print(dpg.get_value(self.table[0][0]))
+
     def setMatirxSize(self,row:int,column:int):
         if row>self.rowSize:
             tmp_row = row
@@ -55,5 +54,9 @@ class createTable():
                 result[i].append(dpg.get_value(self.table[i][j]))       
         return result
     
-
+    def resetMatrixData(self):
+        for i in range(0,self.rowSize):
+            for j in range(0,self.columnSize):
+                dpg.set_value(item=self.table[i][j], value=0)
+                
        

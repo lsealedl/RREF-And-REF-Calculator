@@ -21,7 +21,7 @@ class matrixOperation():
                 return -1
         return -1
     
-    def check_row_echelon_form(self):
+    def check_ref(self):
         if (self.rows == 1) :
             if (self.are_all_value_of_row_is_zero(0) or self.leading_coefficient(0) != -1) :
                 return True
@@ -46,12 +46,12 @@ class matrixOperation():
                 return False
         return True
 
-    def check_reduce_row_echelon_form(self):
-        if (self.check_row_echelon_form()) :
+    def check_rref(self):
+        if (self.check_ref()) :
             for i in range(0,self.rows):
                 if self.leading_coefficient(i) != -1:
                     for j in range(0,self.rows):
-                        if self.matrix[j][self.leading_coefficient()]==0:
+                        if self.matrix[j][self.leading_coefficient(i-1)]==0:
                             pass
                         elif i==j:
                             pass
@@ -94,20 +94,19 @@ class matrixOperation():
             while j < self.rows:
                 if leading_coefficient_position_in_row != -1:
                     if self.matrix[leading_coefficient_position_in_row][i] == 1:
-                        print("e")
                         if leading_coefficient_position_in_row != j and self.matrix[j][i] != 0:
                             answer["operation"].append(f'R{j+1} = R{j+1}+({-1*self.matrix[j][i]})R{leading_coefficient_position_in_row+1}')
                             self.adding_row_by_row(j, leading_coefficient_position_in_row, -1*self.matrix[j][i])
-                            answer["matrix"].append(copy.deepcopy(self.matrix))  # Append a deep copy of the matrix
+                            answer["matrix"].append(copy.deepcopy(self.matrix))  
                     elif self.matrix[j][i] != 0 and leading_coefficient_position_in_row <= j:
                         if j != leading_coefficient_position_in_row:
                             answer["operation"].append(f'R{j+1}<->R{leading_coefficient_position_in_row+1}')
                             self.switching_two_rows(j, leading_coefficient_position_in_row)
-                            answer["matrix"].append(copy.deepcopy(self.matrix))  # Append a deep copy of the matrix
+                            answer["matrix"].append(copy.deepcopy(self.matrix))  
                         if self.matrix[leading_coefficient_position_in_row][i] != 1:
                             answer["operation"].append(f'R{leading_coefficient_position_in_row+1} = R{leading_coefficient_position_in_row+1}/{self.matrix[leading_coefficient_position_in_row][i]}')
                             self.multiplying_row_by_constant(leading_coefficient_position_in_row, 1/self.matrix[leading_coefficient_position_in_row][i])
-                            answer["matrix"].append(copy.deepcopy(self.matrix))  # Append a deep copy of the matrix
+                            answer["matrix"].append(copy.deepcopy(self.matrix)) 
                         j = -1
                 j += 1
 
@@ -118,4 +117,38 @@ class matrixOperation():
                 if leading_coefficient_position_in_row == self.rows:
                     leading_coefficient_position_in_row = -1
                 
+        return answer
+
+    def calculate_ref(self):
+        answer = {
+            "matrix": [],
+            "operation": []
+        }
+        leading_coefficient_position_in_row = 0
+        for i in range(0, self.columns):
+            j = 0
+            while j < self.rows:
+                if leading_coefficient_position_in_row != -1:
+                    if self.matrix[leading_coefficient_position_in_row][i] == 1:  
+                        if (leading_coefficient_position_in_row != j and self.matrix[j][i] != 0 and leading_coefficient_position_in_row < j):
+                            answer["operation"].append(f'R{j+1} = R{j+1}+({-1*self.matrix[j][i]})R{leading_coefficient_position_in_row+1}')
+                            self.adding_row_by_row(j, leading_coefficient_position_in_row, -1*self.matrix[j][i])
+                            answer["matrix"].append(copy.deepcopy(self.matrix))
+                    elif (self.matrix[j][i] != 0 and leading_coefficient_position_in_row <= j):
+                        if j != leading_coefficient_position_in_row:
+                            answer["operation"].append(f'R{j+1}<->R{leading_coefficient_position_in_row+1}')
+                            self.switching_two_rows(j, leading_coefficient_position_in_row)
+                            answer["matrix"].append(copy.deepcopy(self.matrix))  
+                        if self.matrix[leading_coefficient_position_in_row][i] != 1:
+                            answer["operation"].append(f'R{leading_coefficient_position_in_row+1} = R{leading_coefficient_position_in_row+1}/{self.matrix[leading_coefficient_position_in_row][i]}')
+                            self.multiplying_row_by_constant(leading_coefficient_position_in_row, 1/self.matrix[leading_coefficient_position_in_row][i])
+                            answer["matrix"].append(copy.deepcopy(self.matrix)) 
+                        j = -1
+                j += 1
+            if leading_coefficient_position_in_row == -1:
+                pass
+            elif self.matrix[leading_coefficient_position_in_row][i] == 1:
+                leading_coefficient_position_in_row += 1
+                if leading_coefficient_position_in_row == self.rows:
+                    leading_coefficient_position_in_row = -1
         return answer
